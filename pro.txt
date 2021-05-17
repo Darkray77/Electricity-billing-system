@@ -33,7 +33,7 @@ class User
 			{	cout<<endl;
 				cout<<"MeterNo.                     :"<<mno<<endl;
 				cout<<"Name                          :";puts(name);
-				cout<<"Address                       :";puts(address);
+				cout<<"Address                      :";puts(address);
 				cout<<"Customer Code is               :"<<cust_code;
 			}
 			int Returnmno()
@@ -327,7 +327,7 @@ void Delete()
 	getch();
 
 }
-void main()
+void main() // start of main
 {	clrscr();
 	while(1)
 	{	clrscr();
