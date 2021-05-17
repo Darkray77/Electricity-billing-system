@@ -1,0 +1,366 @@
+#include<fstream.h>
+#include<conio.h>
+#include<stdio.h>
+#include<stdlib.h>
+class User
+{	 private:
+			int mno;
+			char name[100];
+			char address[500];
+			int cust_code;
+	 public:
+			void Input()
+			{	cout<<"Enter Name:          ";
+				gets(name);
+				cout<<"Enter Address:       ";
+				gets(address);
+				cout<<"Enter Customer Code:  ";
+				cin>>cust_code;
+				cout<<endl<<"Your Meter No. is:   "<<mno;
+			}
+
+			void Input1()
+			{	cout<<"Enter Name          ";
+				gets(name);
+				cout<<"Enter Address       ";
+				gets(address);
+				cout<<"Enter Customer Code  ";
+				cin>>cust_code;
+			}
+
+
+	void Output()
+			{	cout<<endl;
+				cout<<"MeterNo.                     :"<<mno<<endl;
+				cout<<"Name                          :";puts(name);
+				cout<<"Address                       :";puts(address);
+				cout<<"Customer Code is               :"<<cust_code;
+			}
+			int Returnmno()
+			{	return mno;	}
+			void Getmno(int x)
+			{ 	mno=x;		}
+};
+class Bill
+{	private:
+			int mn,mrc,mrp,tu;
+	public:
+			void Input();
+			void Output()
+			{	cout<<"\nMeter Reading Previous Month  :"<<mrp;
+				cout<<"\nMeter Reading Current Month   :"<<mrc;
+				cout<<"\nTotalUnits Consumed          :"<<tu;	}
+
+			int Returntu()
+			{	return tu;	}
+			int Returnmn()
+			{	return mn;	}
+};
+User getid(User q)
+{ 	User q1;
+	fstream abc;
+	int i=0;
+	long Id=0;
+	abc.open("Consumer.dat",ios::in|ios::binary);
+	while(!abc.eof())
+	{ 	abc.read((char*)&q1,sizeof(q1));
+		if(abc.eof())
+		break;
+		i=1;
+		if(Id<=q1.Returnmno())
+		Id=q1.Returnmno()+1;
+		q.Getmno(Id);
+	}
+		if(i==0)
+		{ 	Id=1;
+			q.Getmno(Id);
+		}
+		Id=q.Returnmno();
+		return q;
+}
+void Bill::Input()
+			{	cout<<"\nEnter Meter Number                  ";
+				cin>>mn;
+				cout<<"\nEnter Meter Reading Previous Month  ";
+				cin>>mrp;
+				label:
+				cout<<"\nEnter Meter Reading Current  Month  ";
+				cin>>mrc;
+				if(mrc<mrp)
+				{	cout<<"\nCurrent Month Meter Reading Cannot Be Less Than Previous Month Reading. \nTry Again!!";
+					goto label;
+				}
+				tu=mrc-mrp;
+			}
+void Enter()
+{  clrscr();
+	cout<<endl<<"WELCOME "<<endl;
+cout<<" ELECTRICITY BILLING SYSTEM "<<endl<<endl;
+	cout<<" ENTER NEW RECORD "<<endl<<endl;
+	fstream abc;
+
+	abc.open("Consumer.dat",ios::in|ios::app|ios::binary);
+	User U;
+	int m;
+	U=getid(U);
+	U.Input();
+	abc.write((char*)&U,sizeof(U));
+	cout<<"\nRecord Entered!   ";
+	abc.close();
+	getch();
+}
+void AddBD()
+{
+	clrscr();
+cout<<endl<<" WELCOME "<<endl;
+cout<<"ELECTRICITY BILLING SYSTEM "<<endl<<endl;
+	cout<<" ADD BILLING DETAILS "<<endl<<endl;
+	fstream def;
+	def.open("B.dat",ios::in|ios::app|ios::binary);
+	Bill B;
+	B.Input();
+	def.write((char*)&B,sizeof(B));
+	cout<<"\nBilling Details Entered!  ";
+	def.close();
+getch();
+}
+void Update()
+{
+	clrscr();
+cout<<endl<<" WELCOME "<<endl;
+cout<<" ELECTRICITY BILLING SYSTEM "<<endl<<endl;
+cout<<" MODIFY PERSONAL DETAILS "<<endl<<endl;
+
+	int a;
+	cout<<"Enter Meter No. to be Modified ";
+	cin>>a;
+	fstream abc;
+	abc.open("Consumer.dat",ios::out|ios::in|ios::binary);
+	User U;
+	int f=0;
+	long pos;
+	while(!abc.eof())
+	{
+		if(abc.eof())
+		break;
+		pos=abc.tellg();
+		abc.read((char*)&U,sizeof(U));
+		if(U.Returnmno()==a)
+		{	f=1;
+			U.Input1();
+			abc.seekg(pos);
+			abc.write((char*)&U,sizeof(U));
+			cout<<"\nDetails Modified!";
+			break;
+		}
+	 }
+		if(f==0)
+		cout<<"\nNo such Meter No. ";
+		abc.close();
+getch();
+}
+void View()
+{  clrscr();
+cout<<endl<<" WELCOME "<<endl;
+cout<<" ELECTRICITY BILLING SYSTEM"<<endl<<endl;
+	cout<<" SEARCH A RECORD "<<endl<<endl;
+
+	int a,f=0;
+	cout<<"\nEnter Meter No. to be viewed   ";
+	cin>>a;
+	fstream abc,def;
+	User U;
+	Bill B;
+	abc.open("Consumer.dat",ios::app|ios::in|ios::binary);
+	def.open("B.dat",ios::app|ios::in|ios::binary);
+
+	while(!abc.eof())
+	{	abc.read((char*)&U,sizeof(U));
+		if(abc.eof())
+		break;
+		if(U.Returnmno()==a)
+		{	f=1;
+			U.Output();
+			cout<<endl;
+			break;
+		}
+	}
+	while(!def.eof())
+	{
+		def.read((char*)&B,sizeof(B));
+		if(def.eof())
+		break;
+		if(B.Returnmn()==a)
+		{	f=1;
+			B.Output();
+		}
+	}
+
+	if(f==0)
+	cout<<"\nNo such Meter No. exists ";
+	abc.close();
+	def.close();
+getch();
+}
+void GenerateB()
+{	clrscr();
+cout<<endl<<" WELCOME "<<endl;
+cout<<"ELECTRICITY BILLING SYSTEM "<<endl<<endl;
+cout<<"GENERATE ELECTRICITY BILL "<<endl<<endl;
+	int a,f=0;
+	cout<<"\nEnter Meter No.               ";
+	cin>>a;
+	fstream abc,def;
+	User U;
+	Bill B;
+	abc.open("Consumer.dat",ios::app|ios::in|ios::binary);
+	def.open("B.dat",ios::app|ios::in|ios::binary);
+	while(!abc.eof())
+	{
+		abc.read((char*)&U,sizeof(U));
+		if(abc.eof())
+		break;
+		if(U.Returnmno()==a)
+		{	f=1;
+			U.Output();
+			cout<<endl;
+		}
+	}
+	while(!def.eof())
+	{	def.read((char*)&B,sizeof(B));
+		if(def.eof())
+		break;
+		if(B.Returnmn()==a)
+		{	f=1;
+			B.Output();
+			int tu;
+			int x;
+			float amt,namt;
+			tu=B.Returntu();
+			if(tu<=200)
+			amt=tu*4;
+			else if(tu>200&&tu<=400)
+			{	x=tu-200;
+				amt=800+(x*6);
+			}
+			else if(tu>400&&tu<=600)
+			{	x=tu-400;
+				amt=2000+(x*8);
+			}
+			else if(tu>600&&tu<=800)
+			{	x=tu-600;
+				amt=3600+(x*10);
+			}
+			else if(tu>800&&tu<=1000)
+			{	x=tu-800;
+				amt=5600+(x*12);
+			}
+			else if(tu>1000)
+			{	x=tu-1000;
+				amt=8000+(x*15);
+			}
+			cout<<endl<<"\nEnergy Charges                                  Rs :   "<<amt;
+			cout<<"\nSurcharge on Energy Charges(8% of Energy Charge)Rs :   "<<(8*amt)/100;
+			namt=amt+((8*amt)/100);
+			cout<<"\nNet Amount to be paid                           Rs :   "<<namt;
+			break;
+	}
+	}
+	if(f==0)
+	cout<<"\nNo such Meter No. exists ";
+	abc.close();
+	def.close();
+getch();
+}
+void Delete()
+{	clrscr();
+	cout<<endl<<" WELCOME "<<endl;
+	cout<<" ELECTRICITY BILLING SYSTEM "<<endl<<endl;
+	cout<<" DEACTIVATE ELECTRICITY METER "<<endl<<endl;
+	fstream abc,def;
+	abc.open("Consumer.dat",ios::in|ios::binary);
+	def.open("temp.dat",ios::out|ios::binary);
+	int m;
+	int f=0;
+	User U;
+	cout<<"\nEnter Meter No to be deleted     ";
+	cin>>m;
+	while(!abc.eof())
+	{
+		abc.read((char*)&U,sizeof(U));
+		if(U.Returnmno()==m)
+			f=1;
+		else
+		def.write((char*)&U,sizeof(U));
+	}
+
+	if(f!=0)
+	{
+	  remove("Consumer.dat");
+	  rename("temp.dat","Consumer.dat");
+	}
+	abc.close();
+	def.close();
+
+	fstream pqr,xyz;
+	pqr.open("B.dat",ios::in|ios::binary);
+	xyz.open("temp1.dat",ios::out|ios::binary);
+	Bill B;
+	while(!pqr.eof())
+	{
+		pqr.read((char*)&B,sizeof(B));
+		if(B.Returnmn()==m)
+			f=1;
+		else
+		xyz.write((char*)&B,sizeof(B));
+	}
+	if(f==0)
+	cout<<"\nNo such Meter No. exists    ";
+	else
+	{
+	cout<<"\nRecord Deleted!!  ";
+	  remove("B.dat");
+	  rename("temp1.dat","B.dat");
+	}
+	pqr.close();
+	xyz.close();
+	getch();
+
+}
+void main()
+{	clrscr();
+	while(1)
+	{	clrscr();
+		int a;
+		cout<<endl<<" WELCOME "<<endl;
+		cout<<" ELECTRICITY BILLING SYSTEM "<<endl<<endl;
+		cout<<"Press 1 to Enter a New Record          "<<endl;
+		cout<<"Press 2 to Add Billing Details         "<<endl;
+		cout<<"Press 3 to Update Personal Details     "<<endl;
+		cout<<"Press 4 to View Details                "<<endl;
+		cout<<"Press 5 to Generate Bill               "<<endl;
+		cout<<"Press 6 to Delete Meter Records        "<<endl;
+		cout<<"Press 7 to Exit                        "<<endl;
+		cout<<"Enter your choice                      :";
+		cin>>a;
+	 if(a==1)
+	Enter();
+	 else if(a==2)
+	AddBD();
+	 else if(a==3)
+	Update();
+	 else if(a==4)
+	View();
+	 else if(a==5)
+	GenerateB();
+	 else if(a==6)
+	Delete();
+	 else if(a==7)
+	exit(0);
+	 else
+	 {	cout<<"\nWrong Choice!!";
+			getch();
+			clrscr();	}
+	}
+
+}
